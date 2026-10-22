@@ -150,7 +150,6 @@ def load_persistent_data():
     try:
       with open(DATA_FILE, "r") as f:
         data = json.load(f)
-      # Upgrade any old tricks missing exam_question to the new format
       vault = data.get("tricks_vault", [])
       upgraded_vault = [
           t for t in vault if "exam_question" in t and "shortcut_solution" in t
@@ -175,10 +174,10 @@ def save_persistent_data(data):
 
 
 # ----------------- FORCE CLEAN STATE ON VERSION UPGRADE -----------------
-if st.session_state.get("app_version") != "6.0":
+if st.session_state.get("app_version") != "6.1":
   saved_data = load_persistent_data()
   st.session_state.clear()
-  st.session_state.app_version = "6.0"
+  st.session_state.app_version = "6.1"
   st.session_state.exam_state = "idle"
   st.session_state.questions = []
   st.session_state.user_answers = {}
@@ -201,7 +200,6 @@ st.markdown(
         background-color: #f1f5f9;
     }
 
-    /* Style native Streamlit bordered containers like exam cards */
     div[data-testid="stVerticalBlockBorderWrapper"] {
         background-color: #ffffff;
         border: 1px solid #cbd5e1 !important;
@@ -211,7 +209,6 @@ st.markdown(
         margin-bottom: 12px !important;
     }
 
-    /* Make KaTeX math & vinculum overline bars crystal clear */
     .katex {
         font-size: 1.14em !important;
         color: #0f172a !important;
@@ -227,7 +224,6 @@ st.markdown(
         border-color: #0f172a !important;
     }
 
-    /* Main Banner */
     .portal-banner {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         color: #ffffff;
@@ -265,7 +261,6 @@ st.markdown(
         margin-bottom: 6px;
     }
 
-    /* Score Card Grid */
     .kpi-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
