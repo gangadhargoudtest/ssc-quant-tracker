@@ -174,10 +174,10 @@ def save_persistent_data(data):
 
 
 # ----------------- FORCE CLEAN STATE ON VERSION UPGRADE -----------------
-if st.session_state.get("app_version") != "6.1":
+if st.session_state.get("app_version") != "6.2":
   saved_data = load_persistent_data()
   st.session_state.clear()
-  st.session_state.app_version = "6.1"
+  st.session_state.app_version = "6.2"
   st.session_state.exam_state = "idle"
   st.session_state.questions = []
   st.session_state.user_answers = {}
@@ -300,22 +300,12 @@ if not api_key:
 
 # ----------------- MATH & JSON SANITIZATION HELPERS -----------------
 def sanitize_latex_json(raw_text: str) -> str:
-  """Ensures LaTeX commands inside JSON strings have properly escaped backslashes."""
   raw_text = re.sub(r"^```json\s*", "", raw_text.strip())
   raw_text = re.sub(r"\s*```$", "", raw_text.strip())
-
-  latex_cmds = (
-      r"(?:d?frac|cfrac|tfrac|overline|underline|sqrt|root|times|div|cdot|pm|mp"
-      r"|le|ge|neq|ne|approx|equiv|left|right|big|Big|bigg|Bigg|text|textbf"
-      r"|mathbf|mathrm|bar|alpha|beta|gamma|theta|pi|sum|prod|implies)"
-  )
-  raw_text = re.sub(r"(?<!\\)\\(" + latex_cmds + r")", r"\\\\\1", raw_text) raw_text = re.sub( r'(?<!\\)\\(?![/\"\\bfnrt]|u[0-9a-fA-F]{4})', r"\\\\", raw_text
-  )
   return raw_text
 
 
 def format_ssc_math(text: str) -> str:
-  """Upgrades any stray Unicode bars or cramped fractions into crisp SSC CGL KaTeX notation."""
   if not text:
     return ""
   text = re.sub(r"(\d)[\u0304\u0305]+", r"$\\overline{\1}$", text)
@@ -336,13 +326,10 @@ CRITICAL SSC CGL MATH DISPLAY RULES (MANDATORY):
 - NEVER use Unicode combining bars like `0.47̄` or flat slash ladders like `1 + 1 / (2 + 1 / 3)`.
 - ALWAYS format mathematical expressions in LaTeX enclosed in `$ ... $` (or `$$ ... $$` for tall simplification expressions):
   * Recurring decimals MUST use `\overline{...}` inside `$ ... $`, e.g., `$0.4\overline{7} + 0.5\overline{83} - 0.2\overline{3}$`.
-  * Continued fraction ladders MUST use vertically stacked `\cfrac` inside `$$ ... $$`, e.g.:
-    `$$1 + \cfrac{1}{2 + \cfrac{1}{1 + \cfrac{1}{3 + \dfrac{1}{2}}}}$$`
-  * Mixed fractions and BODMAS fractions MUST use `\dfrac{a}{b}` and `\overline{...}` for vinculum.
+  * Continued fraction ladders MUST use vertically stacked `\cfrac` inside `$$ ... $$`.
   * Options (`options` array) MUST also use `$ ... $` for fractions, roots, or recurring decimals.
-  * Double-escape backslashes `\\` inside JSON strings.
 4. For EVERY question, write out the COMPLETE numerical step-by-step calculation in `concept_solution` and the COMPLETE numerical exam shortcut in `exam_shortcut`.
-5. In `new_tricks`, include 2 high-yield SSC CGL shortcuts (1 Simplification, 1 Arithmetic). Each MUST include a full `exam_question` (with 4 options) and a step-by-step `shortcut_solution` showing how to solve that exact question in under 10 seconds.
+5. In `new_tricks`, include 2 high-yield SSC CGL shortcuts (1 Simplification, 1 Arithmetic). Each MUST include a full `exam_question` (with 4 options) and a step-by-step `shortcut_solution`.
 
 Return ONLY valid JSON matching this exact structure:
 {
@@ -354,17 +341,17 @@ Return ONLY valid JSON matching this exact structure:
       "question": "What is the value of $0.4\\overline{7} + 0.5\\overline{83} - 0.2\\overline{3}$?",
       "options": ["A) $0.8\\overline{27}$", "B) $0.8\\overline{24}$", "C) $0.8\\overline{25}$", "D) $0.8\\overline{31}$"],
       "correct": "B",
-      "concept_solution": "Step 1: Convert to fractions: $0.4\\overline{7} = \\dfrac{47-4}{90} = \\dfrac{43}{90}$. Step 2: $0.5\\overline{83} = \\dfrac{583-5}{990} = \\dfrac{578}{990}$. Step 3: $0.2\\overline{3} = \\dfrac{23-2}{90} = \\dfrac{21}{90}$. Combining over LCD $990$: $\\dfrac{473 + 578 - 231}{990} = \\dfrac{820}{990} = 0.8\\overline{24}$.",
-      "exam_shortcut": "Write all over base $990$: $\\dfrac{473 + 578 - 231}{990} = \\dfrac{820}{990}$. Add non-repeating digit $8$ to numerator: $820 + 8 = 828 \\rightarrow 0.8\\overline{24}$ in 6 seconds."
+      "concept_solution": "Step 1: Convert to fractions: $0.4\\overline{7} = \\dfrac{47-4}{90} = \\dfrac{43}{90}$.",
+      "exam_shortcut": "Write all over base $990$: $\\dfrac{473 + 578 - 231}{990} = \\dfrac{820}{990}$."
     }
   ],
   "new_tricks": [
     {
       "topic": "Simplification — Algebraic Identities",
       "title": "Sum/Difference of Cubes Instant Cancellation",
-      "rule": "Whenever an expression has the form $\\dfrac{a^3 + b^3}{a^2 - ab + b^2}$, ignore the decimals and directly evaluate $(a + b)$. For $\\dfrac{a^3 - b^3}{a^2 + ab + b^2}$, directly evaluate $(a - b)$.",
+      "rule": "Whenever an expression has the form $\\dfrac{a^3 + b^3}{a^2 - ab + b^2}$, evaluate $(a + b)$.",
       "exam_question": "What is the value of $\\dfrac{(0.76)^3 + (0.24)^3}{(0.76)^2 - 0.76 \\times 0.24 + (0.24)^2}$?\n\n**Options:** A) $0.52$   B) $1.00$   C) $0.1824$   D) $2.00$",
-      "shortcut_solution": "**Step 1:** Spot the $\\dfrac{a^3 + b^3}{a^2 - ab + b^2}$ pattern with $a = 0.76$ and $b = 0.24$.\n\n**Step 2:** Result $= a + b = 0.76 + 0.24 = \\mathbf{1.00}$ (**Option B** in 2 seconds)."
+      "shortcut_solution": "**Step 1:** Result $= a + b = 0.76 + 0.24 = \\mathbf{1.00}$ (**Option B**)."
     }
   ]
 }
@@ -426,7 +413,6 @@ def start_new_exam():
 
 
 def render_live_clock(start_timestamp):
-  """Renders a real-time ticking JS clock that never resets on Streamlit clicks."""
   clock_html = f"""
     <div style="background:#0f172a; color:#38bdf8; font-family:'JetBrains Mono', monospace; padding:10px 18px; border-radius:10px; border:1px solid #334155; display:flex; align-items:center; justify-content:space-between;">
         <span style="font-size:0.8rem; color:#94a3b8; font-family:sans-serif; font-weight:700; text-transform:uppercase;">⏱️ Time Left</span>
@@ -457,7 +443,6 @@ def render_live_clock(start_timestamp):
   components.html(clock_html, height=58)
 
 
-# ----------------- TOP HEADER -----------------
 st.markdown(
     """
 <div class="portal-banner">
@@ -473,18 +458,13 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ----------------- TOP TABS -----------------
 tab_exam, tab_tracker, tab_tricks = st.tabs([
     "📝 Live Exam Portal",
     "📊 Progress & Weak Area Tracker",
     "⚡ Shortcut Tricks Vault",
 ])
 
-# ==============================================================================
-# TAB 1: LIVE EXAM PORTAL
-# ==============================================================================
 with tab_exam:
-  # STATE 1: IDLE
   if st.session_state.exam_state == "idle":
     st.markdown(
         """
@@ -503,7 +483,6 @@ with tab_exam:
       if st.button("🚀 Start Test", type="primary", use_container_width=True):
         start_new_exam()
 
-  # STATE 2: ACTIVE EXAM
   elif st.session_state.exam_state == "active":
     questions = st.session_state.questions
     total_q = len(questions)
@@ -628,7 +607,6 @@ with tab_exam:
             st.session_state.user_answers[qid] = selected
             st.rerun()
 
-  # STATE 3: SUBMITTED
   elif st.session_state.exam_state == "submitted":
     last_result = st.session_state.db["history"][-1]
     avg_pace = round(last_result["time_sec"] / 25, 1)
@@ -737,9 +715,6 @@ with tab_exam:
           with sol_c2:
             st.success(f"**⚡ Exam Shortcut / Topper Trick**\n\n{shortcut_txt}")
 
-# ==============================================================================
-# TAB 2: PROGRESS & WEAK AREA TRACKER
-# ==============================================================================
 with tab_tracker:
   history = st.session_state.db.get("history", [])
   topic_stats = st.session_state.db.get("topic_stats", {})
@@ -854,9 +829,6 @@ with tab_tracker:
         hide_index=True,
     )
 
-# ==============================================================================
-# TAB 3: SHORTCUT TRICKS VAULT
-# ==============================================================================
 with tab_tricks:
   st.markdown(
       "### ⚡ SSC CGL Topper Shortcut Tricks Vault\n"
