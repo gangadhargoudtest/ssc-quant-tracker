@@ -19,64 +19,127 @@ DATA_FILE = "cgl_user_progress.json"
 
 DEFAULT_TRICKS = [
     {
-        "topic": "Simplification — Continued Fractions",
-        "title": "Bottom-Up Array Method (No Reciprocal Writing)",
+        "topic": "Simplification — Continued Fraction Ladder",
+        "title": "Bottom-Up Chain Multiplication (No Reciprocal Writing)",
         "rule": (
-            "For a + 1/(b + 1/(c + 1/d)), start with the bottom fraction (1, d)"
-            " and multiply-add upwards: New = (Integer × Current) + Previous."
+            "Never solve a continued fraction ladder by flipping reciprocals"
+            " step-by-step. Start with the bottom-most fraction"
+            " $\\dfrac{n}{d}$ as $(n, d)$, then move up through each integer"
+            " $k$using:$\\text{Next} = (k \\times \\text{Current}) +"
+            " \\text{Previous}$."
         ),
-        "example": (
-            "3 + 1/(2 + 1/(1 + 1/4)) → Start (1, 4) → 1×4+1 = 5 → 2×5+4 = 14 →"
-            " 3×14+5 = 47 → Answer: 47/14 in 4 seconds."
+        "exam_question": (
+            "If $x = 3 + \\cfrac{1}{2 + \\cfrac{1}{1 + \\dfrac{1}{4}}}$, then"
+            " what is the value of $x$?\n\n**Options:** A) $\\dfrac{47}{14}$"
+            " &nbsp;&nbsp; B) $\\dfrac{43}{14}$ &nbsp;&nbsp; C)"
+            " $\\dfrac{47}{19}$ &nbsp;&nbsp; D) $\\dfrac{39}{14}$"
+        ),
+        "shortcut_solution": (
+            "**Step 1:** Write the bottom fraction $\\dfrac{1}{4}$ as starting"
+            " pair: $(1, 4)$.\n\n**Step 2:** Multiply-add moving upwards"
+            " through the integers $1, 2, 3$:\n* At $1 \\rightarrow (1 \\times" " 4) + 1 = 5$\n* At $2 \\rightarrow (2 \\times 5) + 4 = 14$\n* At"
+            " $3 \\rightarrow (3 \\times 14) + 5 = 47$\n\n**Step 3:** Final"
+            " fraction $= \\dfrac{\\text{Last}}{\\text{Second Last}} ="
+            " \\mathbf{\\dfrac{47}{14}}$ (**Option A** in 5 seconds)."
         ),
     },
     {
         "topic": "Simplification — Recurring Decimals",
-        "title": "Common Base 99/990 Method",
+        "title": "Common Base 990 Numerator Method",
         "rule": (
             "Instead of reducing each recurring decimal to lowest terms and"
-            " finding LCM, convert all terms to base 99 or 990 and add/subtract"
-            " numerators directly."
+            " taking LCM, write all terms directly over a common denominator of"
+            " $990$ (or $99$) using $\\dfrac{\\text{All Digits} -" " \\text{Non-Repeating Digits}}{990}$ and add/subtract numerators"
+            " in one step."
         ),
-        "example": (
-            "0.63(bar) + 0.37(bar) = 63/99 + 37/99 = 100/99 = 1.01(bar)."
+        "exam_question": (
+            "What is the simplest fractional value of $0.\\overline{63} +"
+            " 0.4\\overline{27} - 0.3\\overline{8}$?\n\n**Options:** A)"
+            " $\\dfrac{331}{495}$ &nbsp;&nbsp; B) $\\dfrac{334}{495}$"
+            " &nbsp;&nbsp; C) $\\dfrac{337}{495}$ &nbsp;&nbsp; D)"
+            " $\\dfrac{329}{495}$"
+        ),
+        "shortcut_solution": (
+            "**Step 1:** Express each term over base $990$:\n* $0.\\overline{63}"
+            " = \\dfrac{63}{99} = \\dfrac{630}{990}$\n* $0.4\\overline{27} ="
+            " \\dfrac{427 - 4}{990} = \\dfrac{423}{990}$\n* $0.3\\overline{8} ="
+            " \\dfrac{38 - 3}{90} = \\dfrac{35}{90} ="
+            " \\dfrac{385}{990}$\n\n**Step 2:** Combine numerators: $\\dfrac{630"
+            " + 423 - 385}{990} = \\dfrac{668}{990} ="
+            " \\mathbf{\\dfrac{334}{495}}$ (**Option B**)."
         ),
     },
     {
         "topic": "Profit & Loss — Dishonest Dealer",
-        "title": "Multiplying Factor Chain",
+        "title": "Single Multiplying Factor Chain",
         "rule": (
-            "Net SP/CP Ratio = (Claimed Price Factor) × (True Weight / False"
-            " Weight)."
+            "Set up a direct ratio $\\dfrac{\\text{SP}}{\\text{CP}} ="
+            " \\left(\\text{Claimed Price Factor}\\right) \\times"
+            " \\left(\\dfrac{\\text{True Weight Billed}}{\\text{Actual Weight"
+            " Given}}\\right)$ and cancel common factors crosswise."
         ),
-        "example": (
-            "Sells at 8% loss but uses 750g for 1000g → (92/100) × (1000/750) ="
-            " (23/25) × (4/3) = 92/75 → Profit = 17/75 = 22.67%."
+        "exam_question": (
+            "A dishonest dealer claims to sell pulses at an $8\\%$ loss on cost"
+            " price, but uses a false weight of $750\\text{ g}$ instead of"
+            " $1\\text{ kg}$. What is his actual profit percentage?\n\n"
+            "**Options:** A) $20\\%$ &nbsp;&nbsp; B) $22\\dfrac{2}{3}\\%$"
+            " &nbsp;&nbsp; C) $24\\%$ &nbsp;&nbsp; D) $18\\dfrac{1}{3}\\%$"
+        ),
+        "shortcut_solution": (
+            "**Step 1:** Price factor ($8\\%$loss)$= \\dfrac{92}{100} ="
+            " \\dfrac{23}{25}$.\n\n**Step 2:** Weight factor ($1000\\text{ g}$"
+            " billed for $750\\text{ g}$)$= \\dfrac{1000}{750} ="
+            " \\dfrac{4}{3}$.\n\n**Step 3:** Multiply factors:"
+            " $\\dfrac{\\text{SP}}{\\text{CP}} = \\dfrac{23}{25} \\times"
+            " \\dfrac{4}{3} = \\dfrac{92}{75} \\implies \\text{Profit} ="
+            " \\dfrac{17}{75} \\times 100 = \\mathbf{22\\dfrac{2}{3}\\%}$"
+            " (**Option B**)."
         ),
     },
     {
-        "topic": "Compound Interest — Multi-Cycle",
+        "topic": "Compound Interest — Multi-Cycle (8-Monthly / Half-Yearly)",
         "title": "3-Cycle Ratio Method (3 : 3 : 1)",
         "rule": (
-            "For 3 compounding cycles at r%, calculate step1 = r% of P, step2 ="
-            " r% of step1, step3 = r% of step2. Total CI = 3(step1) + 3(step2)"
-            " + 1(step3)."
+            "For 3 compounding cycles at rate $r\\%$ per cycle, avoid cubing"
+            " $(1 + r/100)^3$. Compute $S_1 = r\\%$ of $P$, $S_2 = r\\%$ of"
+            " $S_1$,$S_3 = r\\%$of$S_2$. Total $\\text{CI} = 3S_1 + 3S_2 +"
+            " 1S_3$."
         ),
-        "example": (
-            "P = 31,250, r = 8% for 3 cycles → step1 = 2500, step2 = 200, step3"
-            " = 16 → CI = 3(2500)+3(200)+16 = ₹8,116."
+        "exam_question": (
+            "What is the compound interest on a sum of ₹$31,250$ for $2\\text{" " years}$ at $12\\%$ p.a., if the interest is compounded"
+            " $8\\text{-monthly}$?\n\n**Options:** A) ₹$8,016$ &nbsp;&nbsp; B)"
+            " ₹$8,116$ &nbsp;&nbsp; C) ₹$8,216$ &nbsp;&nbsp; D) ₹$7,916$"
+        ),
+        "shortcut_solution": (
+            "**Step 1:** $2\\text{ years} = 24\\text{ months} \\implies n ="
+            " \\dfrac{24}{8} = 3\\text{ cycles}$. Cycle rate $r = 12\\% \\times"
+            " \\dfrac{8}{12} = 8\\%$.\n\n**Step 2:** Take $8\\%$ successively"
+            " 3 times:\n* $S_1 = 8\\%$ of $31,250 = 2500$\n* $S_2 = 8\\%$ of"
+            " $2500 = 200$\n* $S_3 = 8\\%$ of $200 = 16$\n\n**Step 3:**"
+            " $\\text{CI} = 3(2500) + 3(200) + 1(16) = 7500 + 600 + 16 ="
+            " \\mathbf{₹8,116}$ (**Option B**)."
         ),
     },
     {
         "topic": "Time & Work — Leaving Mid-Way",
-        "title": "Direct Work Fraction Subtraction",
+        "title": "Direct Work-Fraction Subtraction (Zero LCM)",
         "rule": (
-            "Skip LCM when workers leave early. Calculate fraction completed ="
-            " (Days worked / Total alone days) and subtract from 1."
+            "When workers work for a known number of days and leave, skip"
+            " finding the LCM of total work. Subtract each worker's fraction"
+            " $\\left(\\dfrac{\\text{Days Worked}}{\\text{Total Alone" " Days}}\\right)$ from $1$."
         ),
-        "example": (
-            "A (20d) works 5d = 5/20 = 1/4. B (30d) works 15d = 15/30 = 1/2."
-            " Remaining for C = 1 - 3/4 = 1/4 in 10d → C alone = 40 days."
+        "exam_question": (
+            "$A$ can complete a work in $20\\text{ days}$ and $B$ in $30\\text{" " days}$. They work together for $5\\text{ days}$, then $A$ leaves."
+            " $C$ joins $B$ and they finish the remaining work in $10\\text{" " days}$. In how many days can $C$ alone finish the entire"
+            " work?\n\n**Options:** A) $30\\text{ days}$ &nbsp;&nbsp; B)"
+            " $36\\text{ days}$ &nbsp;&nbsp; C) $40\\text{ days}$ &nbsp;&nbsp;"
+            " D) $45\\text{ days}$"
+        ),
+        "shortcut_solution": (
+            "**Step 1:** $A$ works $5\\text{ days} = \\dfrac{5}{20} ="
+            " \\dfrac{1}{4}$ work.\n\n**Step 2:** $B$ works $5 + 10 = 15\\text{" " days} = \\dfrac{15}{30} = \\dfrac{1}{2}$ work.\n\n**Step 3:**"
+            " Remaining work for $C = 1 - \\left(\\dfrac{1}{4} +" " \\dfrac{1}{2}\\right) = \\dfrac{1}{4}$ work in $10\\text{ days}$"
+            " $\\implies$ Whole work $= 10 \\times 4 = \\mathbf{40\\text{" " days}}$ (**Option C**)."
         ),
     },
 ]
@@ -86,7 +149,18 @@ def load_persistent_data():
   if os.path.exists(DATA_FILE):
     try:
       with open(DATA_FILE, "r") as f:
-        return json.load(f)
+        data = json.load(f)
+      # Upgrade any old tricks missing exam_question to the new format
+      vault = data.get("tricks_vault", [])
+      upgraded_vault = [
+          t for t in vault if "exam_question" in t and "shortcut_solution" in t
+      ]
+      existing_titles = {t["title"] for t in upgraded_vault}
+      for dt in DEFAULT_TRICKS:
+        if dt["title"] not in existing_titles:
+          upgraded_vault.append(dt)
+      data["tricks_vault"] = upgraded_vault
+      return data
     except Exception:
       pass
   return {"history": [], "topic_stats": {}, "tricks_vault": DEFAULT_TRICKS}
@@ -101,11 +175,11 @@ def save_persistent_data(data):
 
 
 # ----------------- FORCE CLEAN STATE ON VERSION UPGRADE -----------------
-if st.session_state.get("app_version") != "4.0":
+if st.session_state.get("app_version") != "6.0":
   saved_data = load_persistent_data()
   st.session_state.clear()
-  st.session_state.app_version = "4.0"
-  st.session_state.exam_state = "idle"  # "idle", "active", "submitted"
+  st.session_state.app_version = "6.0"
+  st.session_state.exam_state = "idle"
   st.session_state.questions = []
   st.session_state.user_answers = {}
   st.session_state.start_time = None
@@ -113,7 +187,7 @@ if st.session_state.get("app_version") != "4.0":
   st.session_state.show_explanations = False
   st.session_state.db = saved_data
 
-# ----------------- PREMIUM EXAM HALL CSS -----------------
+# ----------------- PREMIUM EXAM HALL & KATEX MATH CSS -----------------
 st.markdown(
     """
 <style>
@@ -125,6 +199,32 @@ st.markdown(
     }
     .stApp {
         background-color: #f1f5f9;
+    }
+
+    /* Style native Streamlit bordered containers like exam cards */
+    div[data-testid="stVerticalBlockBorderWrapper"] {
+        background-color: #ffffff;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 12px !important;
+        padding: 18px 22px !important;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03) !important;
+        margin-bottom: 12px !important;
+    }
+
+    /* Make KaTeX math & vinculum overline bars crystal clear */
+    .katex {
+        font-size: 1.14em !important;
+        color: #0f172a !important;
+    }
+    .katex-display {
+        margin: 0.6em 0 !important;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+    .katex .overline .overline-line,
+    .katex .mfrac .frac-line {
+        border-bottom-width: 1.9px !important;
+        border-color: #0f172a !important;
     }
 
     /* Main Banner */
@@ -140,15 +240,6 @@ st.markdown(
         box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
     }
 
-    /* Question Card */
-    .q-container {
-        background: #ffffff;
-        border: 1px solid #cbd5e1;
-        border-radius: 12px;
-        padding: 20px 24px;
-        margin-bottom: 14px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-    }
     .topic-pill {
         background: #e0f2fe;
         color: #0369a1;
@@ -159,7 +250,7 @@ st.markdown(
         text-transform: uppercase;
         letter-spacing: 0.4px;
         display: inline-block;
-        margin-bottom: 10px;
+        margin-bottom: 6px;
     }
     .topic-pill-arith {
         background: #fef3c7;
@@ -171,38 +262,7 @@ st.markdown(
         text-transform: uppercase;
         letter-spacing: 0.4px;
         display: inline-block;
-        margin-bottom: 10px;
-    }
-    .q-body {
-        font-size: 1.04rem;
-        font-weight: 600;
-        color: #1e293b;
-        line-height: 1.55;
-        margin-bottom: 8px;
-    }
-
-    /* Side-by-Side Solution Cards */
-    .concept-box {
-        background: #f8fafc;
-        border: 1px solid #bfdbfe;
-        border-left: 5px solid #2563eb;
-        border-radius: 8px;
-        padding: 16px;
-        height: 100%;
-        font-size: 0.92rem;
-        line-height: 1.6;
-        color: #1e293b;
-    }
-    .shortcut-box {
-        background: #f0fdf4;
-        border: 1px solid #bbf7d0;
-        border-left: 5px solid #16a34a;
-        border-radius: 8px;
-        padding: 16px;
-        height: 100%;
-        font-size: 0.92rem;
-        line-height: 1.6;
-        color: #1e293b;
+        margin-bottom: 6px;
     }
 
     /* Score Card Grid */
@@ -242,15 +302,52 @@ if not api_key:
   with st.sidebar:
     api_key = st.text_input("Enter Gemini API Key", type="password")
 
+
+# ----------------- MATH & JSON SANITIZATION HELPERS -----------------
+def sanitize_latex_json(raw_text: str) -> str:
+  """Ensures LaTeX commands inside JSON strings have properly escaped backslashes."""
+  raw_text = re.sub(r"^```json\s*", "", raw_text.strip())
+  raw_text = re.sub(r"\s*```$", "", raw_text.strip())
+
+  latex_cmds = (
+      r"(?:d?frac|cfrac|tfrac|overline|underline|sqrt|root|times|div|cdot|pm|mp"
+      r"|le|ge|neq|ne|approx|equiv|left|right|big|Big|bigg|Bigg|text|textbf"
+      r"|mathbf|mathrm|bar|alpha|beta|gamma|theta|pi|sum|prod|implies)"
+  )
+  raw_text = re.sub(r"(?<!\\)\\(" + latex_cmds + r")", r"\\\\\1", raw_text) raw_text = re.sub( r'(?<!\\)\\(?![/\"\\bfnrt]|u[0-9a-fA-F]{4})', r"\\\\", raw_text
+  )
+  return raw_text
+
+
+def format_ssc_math(text: str) -> str:
+  """Upgrades any stray Unicode bars or cramped fractions into crisp SSC CGL KaTeX notation."""
+  if not text:
+    return ""
+  text = re.sub(r"(\d)[\u0304\u0305]+", r"$\\overline{\1}$", text)
+  text = re.sub(r"\\frac(?=\{)", r"\\dfrac", text)
+  return text
+
+
 # ----------------- QUESTION GENERATION PROMPT -----------------
-EXAM_PROMPT = """
+EXAM_PROMPT = r"""
 Generate an authentic SSC CGL Tier 1 / Tier 2 Quantitative Aptitude test of EXACTLY 25 multiple-choice questions (strictly TCS PYQ pattern).
 
 RULES:
-1. Exactly 9 questions MUST be Simplification (BODMAS with 'of', recurring decimals, continued fraction ladders, surds/indices, algebraic identities).
+1. Exactly 9 questions MUST be Simplification (BODMAS with 'of' and vinculum bar, recurring decimals, continued fraction ladders, surds/indices, algebraic identities).
 2. Exactly 16 questions MUST be Arithmetic Word Problems (Percentage, Profit & Loss, Dishonest Dealer, Simple & Compound Interest, Ratio & Proportion, Mixture & Alligation, Time & Work, Pipes & Cisterns, Time Speed Distance, Trains/Boats, Averages, Data Interpretation).
 3. SHUFFLE the 9 Simplification and 16 Arithmetic questions randomly from Q1 to Q25. Pure Maths (Geometry, Trigonometry, Algebra, Mensuration) is strictly excluded.
-4. CRITICAL: For EVERY question, write out the COMPLETE numerical step-by-step calculation in `concept_solution` and the COMPLETE numerical exam shortcut in `exam_shortcut`. NEVER use placeholder text.
+
+CRITICAL SSC CGL MATH DISPLAY RULES (MANDATORY):
+- NEVER use Unicode combining bars like `0.47̄` or flat slash ladders like `1 + 1 / (2 + 1 / 3)`.
+- ALWAYS format mathematical expressions in LaTeX enclosed in `$ ... $` (or `$$ ... $$` for tall simplification expressions):
+  * Recurring decimals MUST use `\overline{...}` inside `$ ... $`, e.g., `$0.4\overline{7} + 0.5\overline{83} - 0.2\overline{3}$`.
+  * Continued fraction ladders MUST use vertically stacked `\cfrac` inside `$$ ... $$`, e.g.:
+    `$$1 + \cfrac{1}{2 + \cfrac{1}{1 + \cfrac{1}{3 + \dfrac{1}{2}}}}$$`
+  * Mixed fractions and BODMAS fractions MUST use `\dfrac{a}{b}` and `\overline{...}` for vinculum.
+  * Options (`options` array) MUST also use `$ ... $` for fractions, roots, or recurring decimals.
+  * Double-escape backslashes `\\` inside JSON strings.
+4. For EVERY question, write out the COMPLETE numerical step-by-step calculation in `concept_solution` and the COMPLETE numerical exam shortcut in `exam_shortcut`.
+5. In `new_tricks`, include 2 high-yield SSC CGL shortcuts (1 Simplification, 1 Arithmetic). Each MUST include a full `exam_question` (with 4 options) and a step-by-step `shortcut_solution` showing how to solve that exact question in under 10 seconds.
 
 Return ONLY valid JSON matching this exact structure:
 {
@@ -258,26 +355,21 @@ Return ONLY valid JSON matching this exact structure:
     {
       "id": 1,
       "category": "Simplification",
-      "topic": "Simplification - BODMAS",
-      "question": "Full question text with clear numbers",
-      "options": ["A) 12", "B) 15", "C) 18", "D) 24"],
+      "topic": "Simplification - Recurring Decimals",
+      "question": "What is the value of $0.4\\overline{7} + 0.5\\overline{83} - 0.2\\overline{3}$?",
+      "options": ["A) $0.8\\overline{27}$", "B) $0.8\\overline{24}$", "C) $0.8\\overline{25}$", "D) $0.8\\overline{31}$"],
       "correct": "B",
-      "concept_solution": "Step 1: Solve inner bracket (3 × 2) = 6. Step 2: 12 ÷ 6 = 2. Step 3: 15 of 3 = 45, and 90 ÷ 45 = 2. Final = 15.",
-      "exam_shortcut": "Evaluate 'of' block mentally: 90/45 = 2. Bracket = 8. 2 × 8 - 1 = 15 in 5 seconds."
+      "concept_solution": "Step 1: Convert to fractions: $0.4\\overline{7} = \\dfrac{47-4}{90} = \\dfrac{43}{90}$. Step 2: $0.5\\overline{83} = \\dfrac{583-5}{990} = \\dfrac{578}{990}$. Step 3: $0.2\\overline{3} = \\dfrac{23-2}{90} = \\dfrac{21}{90}$. Combining over LCD $990$: $\\dfrac{473 + 578 - 231}{990} = \\dfrac{820}{990} = 0.8\\overline{24}$.",
+      "exam_shortcut": "Write all over base $990$: $\\dfrac{473 + 578 - 231}{990} = \\dfrac{820}{990}$. Add non-repeating digit $8$ to numerator: $820 + 8 = 828 \\rightarrow 0.8\\overline{24}$ in 6 seconds."
     }
   ],
   "new_tricks": [
     {
-      "topic": "Simplification Trick",
-      "title": "Name of calculation trick",
-      "rule": "Clear rule explanation",
-      "example": "Worked mini-example with numbers"
-    },
-    {
-      "topic": "Arithmetic Shortcut",
-      "title": "Name of quant shortcut",
-      "rule": "Clear shortcut explanation",
-      "example": "Worked mini-example with numbers"
+      "topic": "Simplification — Algebraic Identities",
+      "title": "Sum/Difference of Cubes Instant Cancellation",
+      "rule": "Whenever an expression has the form $\\dfrac{a^3 + b^3}{a^2 - ab + b^2}$, ignore the decimals and directly evaluate $(a + b)$. For $\\dfrac{a^3 - b^3}{a^2 + ab + b^2}$, directly evaluate $(a - b)$.",
+      "exam_question": "What is the value of $\\dfrac{(0.76)^3 + (0.24)^3}{(0.76)^2 - 0.76 \\times 0.24 + (0.24)^2}$?\n\n**Options:** A) $0.52$   B) $1.00$   C) $0.1824$   D) $2.00$",
+      "shortcut_solution": "**Step 1:** Spot the $\\dfrac{a^3 + b^3}{a^2 - ab + b^2}$ pattern with $a = 0.76$ and $b = 0.24$.\n\n**Step 2:** Result $= a + b = 0.76 + 0.24 = \\mathbf{1.00}$ (**Option B** in 2 seconds)."
     }
   ]
 }
@@ -290,8 +382,8 @@ def start_new_exam():
     return
 
   with st.spinner(
-      "⚡ Preparing your 25-Question SSC CGL Test Paper... Please wait ~15"
-      " seconds."
+      "⚡ Generating authentic SSC CGL Test Paper with stacked math notation"
+      " (~15 seconds)..."
   ):
     try:
       client = genai.Client(api_key=api_key)
@@ -303,10 +395,8 @@ def start_new_exam():
               "temperature": 0.35,
           },
       )
-      raw_text = response.text.strip()
-      raw_text = re.sub(r"^```json\s*", "", raw_text)
-      raw_text = re.sub(r"\s*```$", "", raw_text)
-      payload = json.loads(raw_text)
+      clean_json = sanitize_latex_json(response.text)
+      payload = json.loads(clean_json)
 
       q_list = (
           payload.get("questions", payload)
@@ -324,7 +414,6 @@ def start_new_exam():
         st.session_state.exam_state = "active"
         st.session_state.show_explanations = False
 
-        # Save new tricks to Shortcut Vault automatically
         if new_tricks:
           existing_titles = {
               t["title"] for t in st.session_state.db["tricks_vault"]
@@ -400,7 +489,7 @@ tab_exam, tab_tracker, tab_tricks = st.tabs([
 # TAB 1: LIVE EXAM PORTAL
 # ==============================================================================
 with tab_exam:
-  # STATE 1: IDLE (Landing screen with ONLY "Start Test" button)
+  # STATE 1: IDLE
   if st.session_state.exam_state == "idle":
     st.markdown(
         """
@@ -430,7 +519,6 @@ with tab_exam:
     q_col, pal_col = st.columns([3.3, 1.2])
 
     with pal_col:
-      # Real-time JS Countdown Clock
       render_live_clock(st.session_state.start_time)
 
       st.markdown(
@@ -472,7 +560,6 @@ with tab_exam:
         )
         st.session_state.exam_state = "submitted"
 
-        # Grade and save to persistent tracker immediately
         corr, wrong, unatt = 0, 0, 0
         topic_Stats = st.session_state.db.get("topic_stats", {})
 
@@ -521,36 +608,32 @@ with tab_exam:
         topic_label = q.get("topic", cat)
         pill_cls = "topic-pill" if "Simp" in cat else "topic-pill-arith"
 
-        st.markdown(
-            f"""
-                <div class="q-container">
-                    <span class="{pill_cls}">{topic_label}</span>
-                    <div class="q-body">Q{qid}. {q['question']}</div>
-                </div>
-                """,
-            unsafe_allow_html=True,
-        )
+        with st.container(border=True):
+          st.markdown(
+              f'<span class="{pill_cls}">{topic_label}</span>',
+              unsafe_allow_html=True,
+          )
+          st.markdown(f"**Q{qid}.** {format_ssc_math(q['question'])}")
 
-        opts = q["options"]
-        current_val = st.session_state.user_answers.get(qid)
-        selected = st.radio(
-            label=f"select_{qid}",
-            options=["A", "B", "C", "D"],
-            format_func=lambda x, opts=opts: next(
-                (o for o in opts if o.strip().startswith(x)), x
-            ),
-            index=None
-            if current_val is None
-            else ["A", "B", "C", "D"].index(current_val),
-            key=f"q_radio_{qid}",
-            label_visibility="collapsed",
-        )
-        if selected != current_val:
-          st.session_state.user_answers[qid] = selected
-          st.rerun()
-        st.write("")
+          opts = [format_ssc_math(o) for o in q["options"]]
+          current_val = st.session_state.user_answers.get(qid)
+          selected = st.radio(
+              label=f"select_{qid}",
+              options=["A", "B", "C", "D"],
+              format_func=lambda x, opts=opts: next(
+                  (o for o in opts if o.strip().startswith(x)), x
+              ),
+              index=None
+              if current_val is None
+              else ["A", "B", "C", "D"].index(current_val),
+              key=f"q_radio_{qid}",
+              label_visibility="collapsed",
+          )
+          if selected != current_val:
+            st.session_state.user_answers[qid] = selected
+            st.rerun()
 
-  # STATE 3: SUBMITTED (Scorecard + Toggle Explanations Side-by-Side)
+  # STATE 3: SUBMITTED
   elif st.session_state.exam_state == "submitted":
     last_result = st.session_state.db["history"][-1]
     avg_pace = round(last_result["time_sec"] / 25, 1)
@@ -598,7 +681,7 @@ with tab_exam:
             not st.session_state.show_explanations
         )
     with btn_c2:
-      if st.button("🚀 Start Test (New Session)", use_container_width=True):
+      if st.button("🚀 Start Test", use_container_width=True):
         start_new_exam()
 
     if st.session_state.show_explanations:
@@ -614,71 +697,50 @@ with tab_exam:
         topic_lbl = q.get("topic", q.get("category", "Quant"))
 
         if u_ans is None:
-          status_badge = "<span style='background:#f1f5f9; color:#475569; padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.8rem;'>⚪ Unattempted</span>"
+          status_badge = "⚪ **Unattempted**"
         elif u_ans == c_ans:
-          status_badge = "<span style='background:#dcfce7; color:#15803d; padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.8rem;'>✅ Correct (+2.0)</span>"
+          status_badge = "✅ **Correct (+2.0)**"
         else:
-          status_badge = "<span style='background:#fee2e2; color:#b91c1c; padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.8rem;'>❌ Incorrect (-0.5)</span>"
+          status_badge = "❌ **Incorrect (-0.5)**"
 
-        # Resolve options text
-        opts_html = " &nbsp;&nbsp;|&nbsp;&nbsp; ".join([
-            f"<b style='color:#16a34a;'>{o} ✓</b>"
-            if o.strip().startswith(c_ans)
-            else (
-                f"<span style='color:#dc2626; text-decoration:line-through;'>{o}</span>"
-                if (u_ans and o.strip().startswith(u_ans))
-                else f"<span style='color:#64748b;'>{o}</span>"
+        with st.container(border=True):
+          top_c1, top_c2 = st.columns([2, 2])
+          with top_c1:
+            st.markdown(
+                f'<span class="topic-pill">{topic_lbl}</span>',
+                unsafe_allow_html=True,
             )
-            for o in q["options"]
-        ])
+          with top_c2:
+            st.markdown(
+                f"<div style='text-align:right; font-size:0.9rem;'>{status_badge}"
+                f" &nbsp;|&nbsp; Your Answer: `{u_ans or 'Skipped'}` &nbsp;|&nbsp;"
+                f" Correct: **`{c_ans}`**</div>",
+                unsafe_allow_html=True,
+            )
 
-        st.markdown(
-            f"""
-                <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:12px; padding:20px; margin-top:16px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                        <div><span class="topic-pill">{topic_lbl}</span></div>
-                        <div>{status_badge} &nbsp; <span style="font-size:0.85rem; color:#475569;">Your Answer: <b>{u_ans or 'Skipped'}</b> | Correct: <b style="color:#16a34a;">{c_ans}</b></span></div>
-                    </div>
-                    <div style="font-size:1.02rem; font-weight:600; color:#0f172a; margin-bottom:10px;">Q{qid}. {q['question']}</div>
-                    <div style="font-size:0.9rem; margin-bottom:14px;">{opts_html}</div>
-                </div>
-                """,
-            unsafe_allow_html=True,
-        )
+          st.markdown(f"**Q{qid}.** {format_ssc_math(q['question'])}")
 
-        # Side-by-Side Conceptual vs Shortcut
-        sol_c1, sol_c2 = st.columns(2)
-        concept_txt = (
-            q.get("concept_solution")
-            or q.get("concept")
-            or "Solution steps not provided."
-        )
-        shortcut_txt = (
-            q.get("exam_shortcut")
-            or q.get("shortcut")
-            or "Shortcut not provided."
-        )
-
-        with sol_c1:
-          st.markdown(
-              f"""
-                    <div class="concept-box">
-                        <div style="font-weight:800; color:#1d4ed8; margin-bottom:6px; font-size:0.85rem; text-transform:uppercase;">📘 Detailed Conceptual Method</div>
-                        {concept_txt}
-                    </div>
-                    """,
-              unsafe_allow_html=True,
+          opts_formatted = " &nbsp;&nbsp;•&nbsp;&nbsp; ".join(
+              [format_ssc_math(o) for o in q["options"]]
           )
-        with sol_c2:
-          st.markdown(
-              f"""
-                    <div class="shortcut-box">
-                        <div style="font-weight:800; color:#15803d; margin-bottom:6px; font-size:0.85rem; text-transform:uppercase;">⚡ Exam Shortcut / Topper Trick</div>
-                        {shortcut_txt}
-                    </div>
-                    """,
-              unsafe_allow_html=True,
+          st.markdown(f"**Options:** {opts_formatted}")
+
+          sol_c1, sol_c2 = st.columns(2)
+          concept_txt = format_ssc_math(
+              q.get("concept_solution")
+              or q.get("concept")
+              or "Solution steps not provided."
           )
+          shortcut_txt = format_ssc_math(
+              q.get("exam_shortcut")
+              or q.get("shortcut")
+              or "Shortcut not provided."
+          )
+
+          with sol_c1:
+            st.info(f"**📘 Detailed Conceptual Method**\n\n{concept_txt}")
+          with sol_c2:
+            st.success(f"**⚡ Exam Shortcut / Topper Trick**\n\n{shortcut_txt}")
 
 # ==============================================================================
 # TAB 2: PROGRESS & WEAK AREA TRACKER
@@ -803,22 +865,39 @@ with tab_tracker:
 with tab_tricks:
   st.markdown(
       "### ⚡ SSC CGL Topper Shortcut Tricks Vault\n"
-      "Every time you start a new test, fresh Simplification & Arithmetic"
-      " shortcuts are automatically added to the top of this vault."
+      "Each shortcut includes the **core pattern rule**, an **authentic SSC"
+      " CGL exam question**, and the **step-by-step shortcut method** to solve"
+      " it in under 10 seconds. New tricks are automatically added every time"
+      " you start a test."
   )
 
   tricks_list = st.session_state.db.get("tricks_vault", DEFAULT_TRICKS)
   for idx, tr in enumerate(tricks_list, 1):
-    st.markdown(
-        f"""
-        <div style="background:#ffffff; border:1px solid #cbd5e1; border-left:5px solid #0284c7; border-radius:10px; padding:18px 22px; margin-bottom:14px; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
-            <div style="font-size:0.75rem; font-weight:800; color:#0284c7; text-transform:uppercase; margin-bottom:4px;">{tr.get('topic', 'Quant Trick')}</div>
-            <div style="font-size:1.08rem; font-weight:800; color:#0f172a; margin-bottom:8px;">#{idx}. {tr.get('title', 'Exam Shortcut')}</div>
-            <div style="font-size:0.93rem; color:#334155; margin-bottom:8px;"><b>⚡ The Rule:</b> {tr.get('rule', '')}</div>
-            <div style="background:#f8fafc; border:1px dashed #cbd5e1; padding:10px 14px; border-radius:6px; font-size:0.88rem; color:#0f172a;">
-                <b>📘 Worked Example:</b> {tr.get('example', '')}
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
+    topic_str = tr.get("topic", "Quant Trick")
+    pill_style = (
+        "topic-pill" if "Simp" in topic_str else "topic-pill-arith"
     )
+    exam_q = tr.get("exam_question") or tr.get("example", "")
+    short_sol = tr.get("shortcut_solution") or tr.get("rule", "")
+
+    with st.container(border=True):
+      st.markdown(
+          f'<span class="{pill_style}">{topic_str}</span>',
+          unsafe_allow_html=True,
+      )
+      st.markdown(f"#### #{idx}. {tr.get('title', 'Exam Shortcut')}")
+      st.markdown(
+          f"**💡 The Shortcut Rule:** {format_ssc_math(tr.get('rule', ''))}"
+      )
+
+      q_col_v, s_col_v = st.columns(2)
+      with q_col_v:
+        st.info(
+            "**📝 Authentic SSC CGL Exam Question**\n\n"
+            f"{format_ssc_math(exam_q)}"
+        )
+      with s_col_v:
+        st.success(
+            "**⚡ Step-by-Step Shortcut Method**\n\n"
+            f"{format_ssc_math(short_sol)}"
+        )
