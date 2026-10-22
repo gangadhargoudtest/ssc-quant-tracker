@@ -1,4 +1,5 @@
 import json
+import re
 import time
 from datetime import datetime
 from google import genai
@@ -11,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# ----------------- CUSTOM HIGH-END EXAM CSS -----------------
+# ----------------- HIGH-PERFORMANCE MODERN STYLING -----------------
 st.markdown(
     """
 <style>
@@ -21,90 +22,90 @@ st.markdown(
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
         color: #0f172a;
     }
-    
     .stApp {
         background-color: #f8fafc;
     }
-
-    /* Clean Sticky Top Bar */
-    .exam-header {
+    
+    /* Top Bar */
+    .top-header {
         background: #ffffff;
         border: 1px solid #e2e8f0;
         border-radius: 12px;
-        padding: 16px 24px;
-        margin-bottom: 24px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        padding: 14px 22px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.03);
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
 
-    /* Question Cards */
-    .question-box {
+    /* Question Box */
+    .q-card {
         background: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 24px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+        border-radius: 12px;
+        padding: 22px;
+        margin-bottom: 18px;
+        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+        transition: border-color 0.15s ease;
     }
-    
+    .q-card:hover {
+        border-color: #cbd5e1;
+    }
+
+    /* Badges */
     .badge-simp {
         background-color: #e0f2fe;
         color: #0369a1;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-weight: 700;
         padding: 4px 10px;
         border-radius: 6px;
-        text-transform: uppercase;
         letter-spacing: 0.5px;
         display: inline-block;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
     }
-    
     .badge-arith {
         background-color: #fef3c7;
         color: #b45309;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-weight: 700;
         padding: 4px 10px;
         border-radius: 6px;
-        text-transform: uppercase;
         letter-spacing: 0.5px;
         display: inline-block;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
     }
 
-    .q-text {
+    .q-title {
         font-size: 1.05rem;
         line-height: 1.6;
         font-weight: 600;
         color: #1e293b;
-        margin-bottom: 16px;
-    }
-
-    /* Solution Blocks */
-    .concept-card {
-        background: #f1f5f9;
-        border-left: 4px solid #3b82f6;
-        padding: 14px 18px;
-        border-radius: 0 8px 8px 0;
-        font-size: 0.93rem;
-        line-height: 1.6;
         margin-bottom: 12px;
     }
 
-    .shortcut-card {
-        background: #ecfdf5;
-        border-left: 4px solid #10b981;
+    /* Solution Box Styles */
+    .sol-concept {
+        background: #f1f5f9;
+        border-left: 4px solid #2563eb;
         padding: 14px 18px;
         border-radius: 0 8px 8px 0;
-        font-size: 0.93rem;
+        font-size: 0.92rem;
+        line-height: 1.6;
+        margin-bottom: 10px;
+    }
+    .sol-shortcut {
+        background: #ecfdf5;
+        border-left: 4px solid #059669;
+        padding: 14px 18px;
+        border-radius: 0 8px 8px 0;
+        font-size: 0.92rem;
         line-height: 1.6;
     }
 
-    /* Timer Display */
-    .timer-badge {
+    /* Timer Badge */
+    .timer-box {
         font-family: 'JetBrains Mono', monospace;
         font-size: 1.35rem;
         font-weight: 700;
@@ -114,6 +115,17 @@ st.markdown(
         border-radius: 8px;
         border: 1px solid #bae6fd;
         display: inline-block;
+    }
+
+    /* Palette Box */
+    .palette-container {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px;
+        position: sticky;
+        top: 20px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.03);
     }
 </style>
 """,
@@ -141,17 +153,12 @@ api_key = st.secrets.get("GEMINI_API_KEY", None)
 with st.sidebar:
   st.markdown("### ⚡ Exam Dashboard")
   if not api_key:
-    api_key = st.text_input(
-        "Enter Gemini API Key",
-        type="password",
-        help="Get your key from aistudio.google.com",
-    )
+    api_key = st.text_input("Gemini API Key", type="password")
 
   st.divider()
   st.markdown("#### 📈 Lifetime Audit")
   drills_count = len(st.session_state.audit_history)
   st.metric("Total Drills Completed", drills_count)
-
   if drills_count > 0:
     avg_accuracy = (
         sum(item["accuracy"] for item in st.session_state.audit_history)
@@ -163,29 +170,27 @@ with st.sidebar:
     )
     st.metric("Lifetime Accuracy", f"{avg_accuracy:.1f}%")
     st.metric("Average Score", f"{avg_score:.1f} / 50")
-    st.caption("Target: $\\ge 88\\%$ & $< 22$ mins")
+    st.caption("Benchmark: $\\ge 88\\%$ & $\\le 22$ mins")
 
-# ----------------- GENERATION PROMPT -----------------
-PROMPT_TEMPLATE = """
-Generate an authentic SSC CGL Tier 1 and Tier 2 practice drill of exactly 25 multiple-choice questions strictly adhering to TCS PYQ patterns.
-STRICT COMPOSITION:
-- Exactly 9 Simplification problems (BODMAS nested brackets with 'of' and division, recurring decimals, fraction ladders, mixed fractions, surds/indices).
+# ----------------- ULTRA-FAST LEAN PROMPT -----------------
+# Optimized to complete API response in under 5 seconds
+FAST_PROMPT = """
+Create an SSC CGL Tier 1/2 Quant drill of exactly 25 MCQs (TCS pattern).
+Strict Rules:
+- Exactly 9 Simplification (BODMAS nested brackets, recurring decimals, fraction ladders, mixed fractions, surds/indices).
 - Exactly 16 Arithmetic Word Problems (Percentage, Profit & Loss, CI/SI, Ratio, Mixture, Time & Work, TSD, Averages, DI).
-- Shuffle and intersperse the 9 Simplification and 16 Arithmetic questions randomly throughout all 25 questions.
-- Pure maths (Geometry, Mensuration, Trigonometry, Algebra) is strictly excluded.
-
-CRITICAL JSON FORMAT:
-Return ONLY a valid JSON array containing 25 objects. No markdown ticks, no commentary.
-Each object must have these exact keys:
+- Shuffle the 9 Simplification and 16 Arithmetic questions across all 25 numbers. Pure maths is strictly excluded.
+- Ensure concise solutions to keep response rapid.
+- Return ONLY valid JSON array with 25 objects:
 [
   {
     "id": 1,
-    "type": "Simplification" or "Arithmetic",
-    "question": "Question text here (clean standard text, clear mathematical notation)",
-    "options": ["A) option 1", "B) option 2", "C) option 3", "D) option 4"],
+    "type": "Simplification",
+    "question": "Question text here",
+    "options": ["A) opt1", "B) opt2", "C) opt3", "D) opt4"],
     "correct": "A",
-    "concept_solution": "Detailed step-by-step conceptual explanation",
-    "exam_shortcut": "5-15 second topper trick / shortcut method"
+    "concept": "1-2 sentence core mathematical steps",
+    "shortcut": "5-10 second topper shortcut or digital sum/ratio trick"
   }
 ]
 """
@@ -193,20 +198,28 @@ Each object must have these exact keys:
 
 def fetch_new_drill():
   if not api_key:
-    st.error("Please provide a valid Gemini API Key.")
+    st.error("Please enter a valid Gemini API Key.")
     return
 
-  with st.spinner("⚡ Curating 25 authentic TCS PYQ questions..."):
+  with st.spinner("⚡ Fetching 25 authentic TCS PYQs (typically 3–5s)..."):
     try:
       client = genai.Client(api_key=api_key)
       response = client.models.generate_content(
           model="gemini-3.8-flash",
-          contents=PROMPT_TEMPLATE,
-          config={"response_mime_type": "application/json"},
+          contents=FAST_PROMPT,
+          config={
+              "response_mime_type": "application/json",
+              "temperature": 0.3,
+          },
       )
-      questions_data = json.loads(response.text)
+      text_resp = response.text.strip()
+      # Clean potential markdown wrapping if present
+      text_resp = re.sub(r"^```json\s*", "", text_resp)
+      text_resp = re.sub(r"\s*```$", "", text_resp)
 
-      if len(questions_data) == 25:
+      questions_data = json.loads(text_resp)
+
+      if len(questions_data) >= 20:  # Valid set received
         st.session_state.questions = questions_data
         st.session_state.user_answers = {q["id"]: None for q in questions_data}
         st.session_state.test_submitted = False
@@ -214,17 +227,14 @@ def fetch_new_drill():
         st.session_state.session_counter += 1
         st.rerun()
       else:
-        st.error(
-            f"Received {len(questions_data)} questions instead of 25. Please"
-            " refresh."
-        )
+        st.warning("Received partial question list. Retrying...")
     except Exception as e:
       st.error(f"Error fetching questions: {str(e)}")
 
 
-# ----------------- TOP NAVBAR -----------------
-c_brand, c_refresh = st.columns([4, 1.2])
-with c_brand:
+# ----------------- TOP CONTROLS -----------------
+c_head, c_btn = st.columns([4, 1.3])
+with c_head:
   st.markdown(
       "<h2 style='margin:0; font-weight:800; color:#0f172a;'>🎯 SSC CGL Quant"
       " Speed Sprint</h2><p style='margin:0; color:#64748b; font-size:0.9rem;'"
@@ -232,7 +242,8 @@ with c_brand:
       " Marks • -0.5 Negative Marking</p>",
       unsafe_allow_html=True,
   )
-with c_refresh:
+with c_btn:
+  st.write("")
   if st.button(
       "🔄 Next Session / Refresh", use_container_width=True, type="primary"
   ):
@@ -240,28 +251,35 @@ with c_refresh:
 
 st.write("")
 
-# ----------------- TEST VIEW / PALETTE -----------------
+# ----------------- ACTIVE TEST VIEW -----------------
 if st.session_state.questions:
   elapsed_sec = int(time.time() - st.session_state.start_time)
   rem_sec = max(0, (25 * 60) - elapsed_sec)
   rem_m, rem_s = divmod(rem_sec, 60)
+  total_q = len(st.session_state.questions)
   answered_count = sum(
       1 for a in st.session_state.user_answers.values() if a is not None
   )
 
-  # Status Bar
-  sb_col1, sb_col2, sb_col3 = st.columns([1.5, 3, 1.5])
-  with sb_col1:
+  # Live Exam Status Header
+  col_t, col_p, col_meta = st.columns([1.5, 3, 1.5])
+  with col_t:
+    color_style = (
+        "color:#ef4444; background:#fef2f2; border-color:#fecaca;"
+        if rem_m < 5
+        else "color:#0284c7; background:#f0f9ff; border-color:#bae6fd;"
+    )
     st.markdown(
-        f"<div class='timer-badge'>⏱️ {rem_m:02d}:{rem_s:02d}</div>",
+        f"<div class='timer-box' style='{color_style}'>⏱️"
+        f" {rem_m:02d}:{rem_s:02d}</div>",
         unsafe_allow_html=True,
     )
-  with sb_col2:
+  with col_p:
     st.progress(
-        answered_count / 25,
-        text=f"Attempted: {answered_count} / 25 Questions",
+        answered_count / total_q,
+        text=f"Progress: {answered_count} of {total_q} Attempted",
     )
-  with sb_col3:
+  with col_meta:
     st.markdown(
         f"<div style='text-align:right; font-weight:700; color:#475569;"
         f" padding-top:6px;'>Session"
@@ -273,8 +291,7 @@ if st.session_state.questions:
 
   # ----------------- TEST TAKING VIEW -----------------
   if not st.session_state.test_submitted:
-    # 2-column layout: Questions (Main) and Quick Palette (Sidebar/Right)
-    q_col, p_col = st.columns([3.5, 1.2])
+    q_col, p_col = st.columns([3.4, 1.2])
 
     with q_col:
       for q in st.session_state.questions:
@@ -285,9 +302,9 @@ if st.session_state.questions:
 
         st.markdown(
             f"""
-                <div class="question-box">
+                <div class="q-card">
                     <span class="{badge_cls}">{q['type']}</span>
-                    <div class="q-text">Q{qid}. {q['question']}</div>
+                    <div class="q-title">Q{qid}. {q['question']}</div>
                 </div>
                 """,
             unsafe_allow_html=True,
@@ -315,7 +332,7 @@ if st.session_state.questions:
       c_sub1, c_sub2, c_sub3 = st.columns([1, 2, 1])
       with c_sub2:
         if st.button(
-            "🚀 Submit Test & Generate Scorecard",
+            "🚀 Submit Test & View Scorecard",
             type="primary",
             use_container_width=True,
         ):
@@ -327,30 +344,26 @@ if st.session_state.questions:
 
     with p_col:
       st.markdown(
-          "<div style='background:#ffffff; border:1px solid #e2e8f0;"
-          " border-radius:12px; padding:16px; position:sticky; top:20px;'>"
-          "<h4 style='margin-top:0;'>Question Palette</h4>",
+          "<div class='palette-container'>"
+          "<h4 style='margin-top:0; font-size:1rem; color:#1e293b;'>Question"
+          " Palette</h4>",
           unsafe_allow_html=True,
       )
-      palette_cols = st.columns(5)
-      for i in range(1, 26):
+      palette_grid = st.columns(5)
+      for i in range(1, total_q + 1):
         is_ans = st.session_state.user_answers.get(i) is not None
-        btn_style = "●" if is_ans else "○"
         col_idx = (i - 1) % 5
-        with palette_cols[col_idx]:
-          st.caption(f"**Q{i}**")
-          st.markdown(
-              f"<span style='color:{'#059669' if is_ans else '#94a3b8'};"
-              f" font-size:18px;'>{btn_style}</span>",
-              unsafe_allow_html=True,
-          )
+        with palette_grid[col_idx]:
+          st.caption(f"**{i}**")
+          icon_symbol = "🟢" if is_ans else "⚪"
+          st.markdown(f"<span>{icon_symbol}</span>", unsafe_allow_html=True)
       st.markdown(
-          "<p style='margin-top:12px; font-size:0.75rem; color:#64748b;'>●"
-          " Answered &nbsp;&nbsp; ○ Not Answered</p></div>",
+          "<p style='margin-top:14px; font-size:0.75rem; color:#64748b;'>🟢"
+          " Attempted &nbsp;&nbsp; ⚪ Unattempted</p></div>",
           unsafe_allow_html=True,
       )
 
-  # ----------------- SUBMISSION & RESULTS VIEW -----------------
+  # ----------------- RESULTS & ANALYSIS -----------------
   else:
     correct, incorrect, unattempted = 0, 0, 0
     simp_c, simp_tot = 0, 0
@@ -360,7 +373,6 @@ if st.session_state.questions:
       qid = q["id"]
       user_ans = st.session_state.user_answers.get(qid)
       is_simp = q["type"] == "Simplification"
-
       if is_simp:
         simp_tot += 1
       else:
@@ -381,7 +393,6 @@ if st.session_state.questions:
     accuracy = (correct / attempted * 100) if attempted > 0 else 0
     raw_score = (correct * 2) - (incorrect * 0.5)
 
-    # Save to history once
     if (
         not st.session_state.audit_history
         or st.session_state.audit_history[-1].get("session_id")
@@ -398,48 +409,46 @@ if st.session_state.questions:
           "unattempted": unattempted,
       })
 
-    # Top Results Banner
+    # Metric Cards
     st.markdown(
         f"""
-        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:24px; margin-bottom:24px;">
-            <h3 style="margin-top:0; color:#0f172a;">📊 Performance Scorecard</h3>
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; margin-bottom:24px;">
+            <h3 style="margin-top:0; color:#0f172a; font-weight:800;">📋 Performance Audit</h3>
             <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px;">
-                <div><div style="font-size:0.8rem; color:#64748b;">SCORE</div><div style="font-size:1.8rem; font-weight:800; color:#0284c7;">{raw_score:.1f} <span style="font-size:1rem; color:#94a3b8;">/ 50</span></div></div>
-                <div><div style="font-size:0.8rem; color:#64748b;">ACCURACY</div><div style="font-size:1.8rem; font-weight:800; color:{'#059669' if accuracy >= 88 else '#d97706'};">{accuracy:.1f}%</div></div>
-                <div><div style="font-size:0.8rem; color:#64748b;">CORRECT / WRONG</div><div style="font-size:1.8rem; font-weight:800; color:#334155;">{correct} <span style="color:#ef4444;">/ {incorrect}</span></div></div>
-                <div><div style="font-size:0.8rem; color:#64748b;">TIME TAKEN</div><div style="font-size:1.8rem; font-weight:800; color:#334155;">{st.session_state.total_time_taken} <span style="font-size:1rem; color:#94a3b8;">min</span></div></div>
+                <div><div style="font-size:0.75rem; color:#64748b; font-weight:700;">RAW SCORE</div><div style="font-size:1.8rem; font-weight:800; color:#0284c7;">{raw_score:.1f} <span style="font-size:0.95rem; color:#94a3b8;">/ 50</span></div></div>
+                <div><div style="font-size:0.75rem; color:#64748b; font-weight:700;">ACCURACY</div><div style="font-size:1.8rem; font-weight:800; color:{'#059669' if accuracy >= 88 else '#d97706'};">{accuracy:.1f}%</div></div>
+                <div><div style="font-size:0.75rem; color:#64748b; font-weight:700;">CORRECT / WRONG</div><div style="font-size:1.8rem; font-weight:800; color:#334155;">{correct} <span style="color:#ef4444;">/ {incorrect}</span></div></div>
+                <div><div style="font-size:0.75rem; color:#64748b; font-weight:700;">TIME TAKEN</div><div style="font-size:1.8rem; font-weight:800; color:#334155;">{st.session_state.total_time_taken} <span style="font-size:0.95rem; color:#94a3b8;">min</span></div></div>
             </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    # Diagnostic feedback
     if accuracy >= 88 and st.session_state.total_time_taken <= 22:
       st.success(
-          "🔥 Benchmark Passed: $\\ge 88\\%$ accuracy under 22 mins. Ready for"
-          " Pure Maths."
+          "🏆 Benchmark Cleared: $\\ge 88\\%$ accuracy under 22 mins! You are"
+          " qualified for Pure Maths inclusion."
       )
     elif accuracy >= 80:
       st.warning(
-          "⚡ Solid Speed: Focus on reducing negative marking errors to push"
-          " past 88%."
+          "⚠️ Good Pace: Focus on cutting negative marking leakage ($-0.5$ per"
+          " wrong answer)."
       )
     else:
       st.error(
-          "🚨 Leakage Detected: High unforced errors. Focus on step-by-step"
-          " accuracy before shortcuts."
+          "🚨 Leakage Alert: High error rate. Prioritize standard steps first,"
+          " then apply shortcuts."
       )
 
     st.info(
-        f"**Simplification Accuracy:** {simp_c}/{simp_tot} &nbsp;|&nbsp;"
-        f" **Arithmetic Accuracy:** {arith_c}/{arith_tot}"
+        f"**Simplification:** {simp_c}/{simp_tot} correct &nbsp;|&nbsp;"
+        f" **Arithmetic:** {arith_c}/{arith_tot} correct"
     )
 
-    # Explanations
     st.write("---")
     with st.expander(
-        "📖 View Step-by-Step Concepts & Exam Shortcuts", expanded=True
+        "📖 Show Conceptual Solutions & Exam Shortcuts", expanded=True
     ):
       for q in st.session_state.questions:
         qid = q["id"]
@@ -448,19 +457,19 @@ if st.session_state.questions:
         status_tag = (
             "✅ Correct"
             if is_corr
-            else ("⚠️ Skipped" if ans is None else "❌ Wrong")
+            else ("⚠️ Skipped" if ans is None else "❌ Incorrect")
         )
 
         st.markdown(
             f"""
-                <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; padding:18px; margin-bottom:18px;">
+                <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; padding:18px; margin-bottom:16px;">
                     <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
                         <strong>Q{qid}. [{q['type']}] — {status_tag}</strong>
                         <span style="font-size:0.85rem; color:#64748b;">Your Choice: <b>{ans or 'None'}</b> | Correct: <b style="color:#059669;">{q['correct']}</b></span>
                     </div>
-                    <p style="margin-bottom:12px; color:#334155;">{q['question']}</p>
-                    <div class="concept-card"><b>📘 Conceptual Method:</b><br>{q['concept_solution']}</div>
-                    <div class="shortcut-card"><b>⚡ Exam Shortcut / Trick:</b><br>{q['exam_shortcut']}</div>
+                    <p style="margin-bottom:12px; color:#334155; font-weight:500;">{q['question']}</p>
+                    <div class="sol-concept"><b>📘 Conceptual Method:</b><br>{q.get('concept', 'Step-by-step logic')}</div>
+                    <div class="sol-shortcut"><b>⚡ Exam Shortcut / Trick:</b><br>{q.get('shortcut', 'Direct calculation shortcut')}</div>
                 </div>
                 """,
             unsafe_allow_html=True,
@@ -469,9 +478,9 @@ if st.session_state.questions:
 else:
   st.markdown(
       """
-    <div style="text-align:center; padding:60px 20px; background:#ffffff; border-radius:16px; border:1px solid #e2e8f0; max-width:700px; margin:40px auto;">
-        <h3 style="color:#0f172a; margin-bottom:8px;">Ready for your drill?</h3>
-        <p style="color:#64748b; margin-bottom:24px;">Click the button below to generate 25 authentic, shuffled TCS PYQ questions with live 25-minute exam timing.</p>
+    <div style="text-align:center; padding:60px 20px; background:#ffffff; border-radius:16px; border:1px solid #e2e8f0; max-width:650px; margin:40px auto; box-shadow:0 1px 4px rgba(0,0,0,0.03);">
+        <h3 style="color:#0f172a; margin-bottom:8px; font-weight:800;">Ready for Today's Drill?</h3>
+        <p style="color:#64748b; margin-bottom:24px; font-size:0.95rem;">25 Questions • 25 Minutes • Authentic TCS Question Distribution.</p>
     </div>
     """,
       unsafe_allow_html=True,
